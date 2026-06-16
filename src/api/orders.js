@@ -1,6 +1,6 @@
 // Orders / checkout API — real backend first, fallback to mock.
 import { api, NoBackendError } from './client'
-import { mockCheckout } from './mock'
+import { mockCheckout, mockGetOrders, mockGetOrder, mockLookup } from './mock'
 
 function isMock(err) {
   return err instanceof NoBackendError
@@ -21,11 +21,30 @@ export async function checkout({ cartToken, email, shippingAddress }) {
   }
 }
 
+export async function getOrders() {
+  try {
+    return await api.get('/api/orders')
+  } catch (err) {
+    if (isMock(err)) return mockGetOrders()
+    throw err
+  }
+}
+
 export async function getOrder(orderNumber) {
   try {
     return await api.get(`/api/orders/${orderNumber}`)
   } catch (err) {
-    if (isMock(err)) return null
+    if (isMock(err)) return mockGetOrder(orderNumber)
+    throw err
+  }
+}
+
+export async function ordersLookup({ orderNumber, email }) {
+  const params = new URLSearchParams({ order_number: orderNumber, email })
+  try {
+    return await api.get(`/api/orders/lookup?${params}`)
+  } catch (err) {
+    if (isMock(err)) return mockLookup({ orderNumber, email })
     throw err
   }
 }

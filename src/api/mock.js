@@ -319,6 +319,39 @@ export function mockMe(storedUser) {
 
 let _orderSeq = 10000
 
+// ---------------------------------------------------------------------------
+// Mock order store
+// ---------------------------------------------------------------------------
+
+const _mockOrderStore = new Map()   // order_number -> full order object
+const _mockOrderEmails = new Map()  // order_number -> email (for guest lookup)
+
+function mockOrderNotFound() {
+  const err = new Error('No matching order found.')
+  err.status = 404
+  err.code = 'not_found'
+  return err
+}
+
+export function mockGetOrders() {
+  return [..._mockOrderStore.values()].reverse()
+}
+
+export function mockGetOrder(orderNumber) {
+  const order = _mockOrderStore.get(orderNumber)
+  if (!order) throw mockOrderNotFound()
+  return order
+}
+
+export function mockLookup({ orderNumber, email }) {
+  const order = _mockOrderStore.get(orderNumber)
+  // Always the same neutral 404 — never confirm whether the order_number exists (INV-8)
+  if (!order || order.email.toLowerCase() !== email.toLowerCase()) {
+    throw mockOrderNotFound()
+  }
+  return order
+}
+
 export function mockCheckout({ email, shippingAddress }) {
   const items = [..._cart.items.values()]
   if (items.length === 0) {
@@ -327,7 +360,7 @@ export function mockCheckout({ email, shippingAddress }) {
   const subtotal_cents = items.reduce((sum, i) => sum + i.line_total_cents, 0)
   const order_number = `TC-${++_orderSeq}`
   _cart.items.clear()
-  return {
+  const order = {
     order_number,
     status: 'Paid',
     email,
@@ -338,5 +371,9 @@ export function mockCheckout({ email, shippingAddress }) {
     payment_method: 'mock',
     is_mock_payment: true,
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   }
+  _mockOrderStore.set(order_number, order)
+  _mockOrderEmails.set(order_number, email)
+  return order
 }

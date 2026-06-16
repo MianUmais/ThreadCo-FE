@@ -1,0 +1,104 @@
+.loading,
+.fetchError {
+  font-size: 0.9375rem;
+  color: var(--color-gray-600);
+  margin-top: var(--spacing-md);
+}
+
+.fetchError {
+  color: var(--color-error, #c00);
+}
+
+.backLink {
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-lg);
+}
+
+.backLink a {
+  color: var(--color-gray-600);
+}
+
+.backLink a:hover {
+  color: var(--color-black);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--color-gray-600);
+  margin-top: var(--spacing-md);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.rowLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.rowRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.orderNumber {
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+}
+
+.orderNumber:hover {
+  text-decoration: underline;
+}
+
+.statusBadge {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2em 0.6em;
+  border-radius: 2px;
+  font-weight: var(--font-weight-medium);
+}
+
+.statusPaid {
+  background: #f0f0f0;
+  color: #555;
+}
+
+.statusPacked {
+  background: #e8f0fe;
+  color: #1a56c4;
+}
+
+.statusShipped {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.total {
+  font-size: 0.9375rem;
+}
+
+.date {
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
+}

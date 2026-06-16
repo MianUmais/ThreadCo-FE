@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { authMe } from '../api/auth'
 import styles from './Account.module.css'
@@ -52,7 +53,9 @@ export default function Account() {
 
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Orders</h2>
-          <p className={styles.empty}>No orders yet.</p>
+          <Link to="/account/orders" className={styles.ordersLink}>
+            View My Orders
+          </Link>
         </section>
       </div>
     </div>

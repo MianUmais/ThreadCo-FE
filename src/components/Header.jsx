@@ -24,6 +24,17 @@ export default function Header() {
             Shop
           </NavLink>
 
+          {isAuthenticated && (
+            <NavLink
+              to="/account/orders"
+              className={({ isActive }) =>
+                [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
+              }
+            >
+              My Orders
+            </NavLink>
+          )}
+
           {isAuthenticated ? (
             <NavLink
               to="/account"

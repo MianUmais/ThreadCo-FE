@@ -50,3 +50,9 @@
   color: var(--color-error, #c00);
   margin-bottom: var(--spacing-md);
 }
+
+.ordersLink {
+  font-size: 0.9375rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

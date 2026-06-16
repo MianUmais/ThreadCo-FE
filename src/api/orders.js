@@ -23,7 +23,8 @@ export async function checkout({ cartToken, email, shippingAddress }) {
 
 export async function getOrders() {
   try {
-    return await api.get('/api/orders')
+    const data = await api.get('/api/orders')
+    return data.items  // GET /api/orders returns paginated envelope {items, page, total}
   } catch (err) {
     if (isMock(err)) return mockGetOrders()
     throw err

@@ -1,14 +1,11 @@
 import { NavLink, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import styles from './Header.module.css'
-
-const NAV_LINKS = [
-  { to: '/products', label: 'Shop' },
-  { to: '/account', label: 'Account' },
-]
 
 export default function Header() {
   const { cartCount } = useCart()
+  const { isAuthenticated, logout } = useAuth()
 
   return (
     <header className={styles.header} data-testid="site-header">
@@ -18,20 +15,46 @@ export default function Header() {
         </Link>
 
         <nav className={styles.nav} aria-label="Main navigation">
-          {NAV_LINKS.map(({ to, label }) => (
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
+            }
+          >
+            Shop
+          </NavLink>
+
+          {isAuthenticated ? (
             <NavLink
-              key={to}
-              to={to}
+              to="/account"
               className={({ isActive }) =>
                 [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
               }
             >
-              {label}
+              Account
             </NavLink>
-          ))}
+          ) : (
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
+              }
+            >
+              Sign In
+            </NavLink>
+          )}
         </nav>
 
         <div className={styles.actions}>
+          {isAuthenticated && (
+            <button
+              className={styles.actionButton}
+              onClick={logout}
+              aria-label="Sign out"
+            >
+              Sign Out
+            </button>
+          )}
           <Link
             to="/cart"
             className={styles.actionLink}

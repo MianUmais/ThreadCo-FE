@@ -1,19 +1,27 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { authMe } from '../api/auth'
 import styles from './Account.module.css'
 
 export default function Account() {
-  const user = null
+  const { user: storedUser, logout } = useAuth()
+  const [user, setUser] = useState(storedUser)
+  const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
 
-  if (!user) {
+  useEffect(() => {
+    let cancelled = false
+    authMe(storedUser)
+      .then((data) => { if (!cancelled) setUser(data.user) })
+      .catch((err) => { if (!cancelled) setFetchError(err.message) })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (loading) {
     return (
       <div className="container page">
-        <div className={styles.unauthenticated}>
-          <h1 className={styles.title}>My Account</h1>
-          <p className={styles.message}>Sign in to view your account and order history.</p>
-          <Link to="/login" className="btn btn-primary" style={{ marginTop: '1.5rem' }}>
-            Sign In
-          </Link>
-        </div>
+        <p>Loading…</p>
       </div>
     )
   }
@@ -21,11 +29,27 @@ export default function Account() {
   return (
     <div className="container page">
       <h1 className="page-title">My Account</h1>
+
+      {fetchError && (
+        <p className={styles.fetchError} role="alert">
+          {fetchError}
+        </p>
+      )}
+
       <div className={styles.sections}>
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Profile</h2>
-          <p>{user.email}</p>
+          {user?.name && <p className={styles.userName}>{user.name}</p>}
+          <p>{user?.email ?? storedUser?.email}</p>
+          <button
+            className="btn btn-outline"
+            style={{ marginTop: '1rem' }}
+            onClick={logout}
+          >
+            Sign Out
+          </button>
         </section>
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Orders</h2>
           <p className={styles.empty}>No orders yet.</p>

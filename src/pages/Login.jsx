@@ -1,14 +1,35 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import styles from './Login.module.css'
 
 export default function Login() {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/account'
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    // Auth wiring comes with feature bead
+    setError(null)
+    setSubmitting(true)
+    try {
+      await login({ email, password })
+      navigate(from, { replace: true })
+    } catch (err) {
+      if (err.status === 401) {
+        setError('Invalid email or password.')
+      } else {
+        setError(err.message || 'Something went wrong. Please try again.')
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -16,7 +37,7 @@ export default function Login() {
       <div className={styles.card}>
         <h1 className={styles.title}>Sign In</h1>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit} className={styles.form} noValidate>
           <div className="form-group">
             <label className="form-label" htmlFor="email">
               Email
@@ -47,14 +68,25 @@ export default function Login() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-            Sign In
+          {error && (
+            <p className={styles.errorMsg} role="alert">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ width: '100%' }}
+            disabled={submitting}
+          >
+            {submitting ? 'Signing In…' : 'Sign In'}
           </button>
         </form>
 
         <p className={styles.register}>
           New here?{' '}
-          <Link to="/account" className={styles.registerLink}>
+          <Link to="/register" className={styles.registerLink}>
             Create account
           </Link>
         </p>

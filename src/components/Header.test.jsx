@@ -3,9 +3,12 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Header from './Header'
 
-// Mock CartContext so Header tests don't need a full CartProvider + API stack
 vi.mock('../context/CartContext', () => ({
   useCart: () => ({ cartCount: 0 }),
+}))
+
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({ isAuthenticated: false, logout: vi.fn() }),
 }))
 
 describe('Header', () => {
@@ -22,10 +25,14 @@ describe('Header', () => {
     expect(screen.getByText('ThreadCo')).toBeInTheDocument()
   })
 
-  it('renders navigation links', () => {
+  it('renders Shop nav link', () => {
     renderHeader()
     expect(screen.getByRole('link', { name: /shop/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /account/i })).toBeInTheDocument()
+  })
+
+  it('renders Sign In link when not authenticated', () => {
+    renderHeader()
+    expect(screen.getByRole('link', { name: /sign in/i })).toBeInTheDocument()
   })
 
   it('renders the cart action', () => {

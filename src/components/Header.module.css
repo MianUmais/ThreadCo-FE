@@ -72,6 +72,22 @@
   text-decoration: none;
 }
 
+.actionButton {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gray-600);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color var(--transition-base);
+}
+
+.actionButton:hover {
+  color: var(--color-black);
+}
+
 .cartBadge {
   display: inline-flex;
   align-items: center;

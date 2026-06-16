@@ -11,7 +11,7 @@ export function clearAuthToken() {
 }
 
 // Thrown for non-2xx responses from the real API.
-// status: HTTP status code; code: API error slug; body: parsed JSON or null
+// status: HTTP status code; code: API error slug; body: parsed JSON or null; fields: per-field validation errors or null
 export class ApiError extends Error {
   constructor(status, rawBody) {
     let parsed = null
@@ -21,6 +21,7 @@ export class ApiError extends Error {
     this.status = status
     this.code = parsed?.error ?? null
     this.body = parsed
+    this.fields = parsed?.fields ?? null
     this.unavailable = parsed?.unavailable ?? null
   }
 }
@@ -33,7 +34,20 @@ export class NoBackendError extends Error {
   }
 }
 
-async function request(path, options = {}) {
+// Called on 401: should refresh the access token and return the new token string,
+// or return null (and handle logout) if refresh fails.
+let _refreshCallback = null
+let _isRefreshing = false
+
+export function setRefreshCallback(fn) {
+  _refreshCallback = fn
+}
+
+export function clearRefreshCallback() {
+  _refreshCallback = null
+}
+
+async function request(path, options = {}, _isRetry = false) {
   if (!BASE_URL) {
     throw new NoBackendError()
   }
@@ -48,6 +62,20 @@ async function request(path, options = {}) {
   }
 
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
+
+  if (res.status === 401 && _refreshCallback && !_isRefreshing && !_isRetry) {
+    _isRefreshing = true
+    let newToken = null
+    try {
+      newToken = await _refreshCallback()
+    } finally {
+      _isRefreshing = false
+    }
+    if (newToken) {
+      return request(path, options, true)
+    }
+    // Refresh failed — fall through to throw the 401
+  }
 
   if (!res.ok) {
     const body = await res.text().catch(() => '')

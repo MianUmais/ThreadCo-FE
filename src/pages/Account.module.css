@@ -39,3 +39,14 @@
   font-size: 0.875rem;
   color: var(--color-gray-400);
 }
+
+.userName {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.fetchError {
+  font-size: 0.875rem;
+  color: var(--color-error, #c00);
+  margin-bottom: var(--spacing-md);
+}

@@ -248,6 +248,75 @@ export function mockRemoveCartItem({ variantId }) {
   return buildCartResponse()
 }
 
+// ---------------------------------------------------------------------------
+// Mock auth (in-memory; resets on page reload — acceptable for mock-only mode)
+// ---------------------------------------------------------------------------
+
+const _mockUsers = new Map()       // id -> { id, email, name, role, password }
+const _mockEmailIndex = new Map()  // email.toLowerCase() -> id
+const _mockAccessTokens = new Map()  // token -> userId
+const _mockRefreshTokens = new Map() // token -> userId
+let _mockUserSeq = 100
+
+function createMockTokens(userId) {
+  const access_token = `mock-at-${userId}-${Date.now()}`
+  const refresh_token = `mock-rt-${userId}-${Date.now()}`
+  _mockAccessTokens.set(access_token, userId)
+  _mockRefreshTokens.set(refresh_token, userId)
+  return { access_token, refresh_token }
+}
+
+function mockAuthErr(status, code, message, fields) {
+  const err = new Error(message)
+  err.status = status
+  err.code = code
+  err.fields = fields ?? null
+  err.body = { error: code, message, ...(fields ? { fields } : {}) }
+  return err
+}
+
+export function mockRegister({ email, password, name }) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw mockAuthErr(400, 'invalid_input', 'Validation failed.', { email: 'Invalid email address.' })
+  }
+  if (!password || password.length < 8) {
+    throw mockAuthErr(400, 'invalid_input', 'Validation failed.', { password: 'Must be at least 8 characters.' })
+  }
+  const key = email.toLowerCase()
+  if (_mockEmailIndex.has(key)) {
+    throw mockAuthErr(409, 'conflict', 'An account with that email already exists.')
+  }
+  const id = _mockUserSeq++
+  const user = { id, email, name: name || '', role: 'customer' }
+  _mockUsers.set(id, { ...user, password })
+  _mockEmailIndex.set(key, id)
+  const tokens = createMockTokens(id)
+  return { user, ...tokens }
+}
+
+export function mockLogin({ email, password }) {
+  const id = _mockEmailIndex.get(email.toLowerCase())
+  const stored = id !== undefined ? _mockUsers.get(id) : null
+  if (!stored || stored.password !== password) {
+    throw mockAuthErr(401, 'unauthorized', 'Invalid email or password.')
+  }
+  const { password: _pw, ...user } = stored
+  const tokens = createMockTokens(id)
+  return { user, ...tokens }
+}
+
+export function mockRefresh({ refreshToken }) {
+  const userId = _mockRefreshTokens.get(refreshToken)
+  if (!userId) throw mockAuthErr(401, 'unauthorized', 'Refresh token expired or invalid.')
+  const { access_token } = createMockTokens(userId)
+  return { access_token }
+}
+
+export function mockMe(storedUser) {
+  if (storedUser) return { user: storedUser }
+  throw mockAuthErr(401, 'unauthorized', 'Not authenticated.')
+}
+
 let _orderSeq = 10000
 
 export function mockCheckout({ email, shippingAddress }) {

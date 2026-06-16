@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import RequireAuth from './components/RequireAuth'
+import RequireAdmin from './components/RequireAdmin'
 import Layout from './components/Layout'
 import Storefront from './pages/Storefront'
 import Products from './pages/Products'
@@ -16,6 +17,8 @@ import OrderLookup from './pages/OrderLookup'
 import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
 import Admin from './pages/Admin'
+import AdminProducts from './pages/AdminProducts'
+import AdminProductForm from './pages/AdminProductForm'
 
 export default function App() {
   return (
@@ -37,7 +40,15 @@ export default function App() {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
             </Route>
-            <Route path="/admin" element={<Admin />} />
+
+            <Route element={<RequireAdmin />}>
+              <Route path="/admin" element={<Admin />}>
+                <Route index element={<Navigate to="/admin/products" replace />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="products/new" element={<AdminProductForm />} />
+                <Route path="products/:id/edit" element={<AdminProductForm />} />
+              </Route>
+            </Route>
           </Routes>
         </CartProvider>
       </AuthProvider>

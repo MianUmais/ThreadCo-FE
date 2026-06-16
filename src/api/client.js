@@ -1,4 +1,8 @@
-const BASE_URL = import.meta.env.VITE_API_URL || ''
+// VITE_API_URL acts as a backend-present signal and as the Vite dev-proxy target
+// (set in vite.config.js). API requests always use relative /api/* paths so the
+// Vite proxy can forward them without CORS issues. When VITE_API_URL is unset,
+// NoBackendError is thrown and callers fall back to mock data.
+const BACKEND_CONFIGURED = !!import.meta.env.VITE_API_URL
 
 let authToken = null
 
@@ -26,10 +30,10 @@ export class ApiError extends Error {
   }
 }
 
-// Thrown when VITE_API_URL is not configured.
+// Thrown when VITE_API_URL is not configured (no backend to talk to).
 export class NoBackendError extends Error {
   constructor() {
-    super('VITE_API_URL not set — using mock data')
+    super('No backend configured (VITE_API_URL unset) — using mock data')
     this.name = 'NoBackendError'
   }
 }
@@ -48,7 +52,7 @@ export function clearRefreshCallback() {
 }
 
 async function request(path, options = {}, _isRetry = false) {
-  if (!BASE_URL) {
+  if (!BACKEND_CONFIGURED) {
     throw new NoBackendError()
   }
 
@@ -61,7 +65,8 @@ async function request(path, options = {}, _isRetry = false) {
     headers['Authorization'] = `Bearer ${authToken}`
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
+  // Relative path — the Vite dev proxy routes /api/* to the Flask backend.
+  const res = await fetch(path, { ...options, headers })
 
   if (res.status === 401 && _refreshCallback && !_isRefreshing && !_isRetry) {
     _isRefreshing = true

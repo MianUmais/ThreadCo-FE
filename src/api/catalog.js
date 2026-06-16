@@ -1,17 +1,13 @@
-// Catalog API — tries the real backend, falls back to mock data transparently.
-// All callers use these functions; swapping mock->real requires no caller changes.
-import { api } from './client'
+// Catalog API — real backend first, mock fallback ONLY when no backend is configured.
+// Callers see real 404/4xx from the backend; only a missing VITE_API_URL falls back to mock.
+import { api, NoBackendError } from './client'
 import { mockGetProducts, mockGetProduct, mockCategories } from './mock'
 
-async function tryApi(fn, fallback) {
-  try {
-    return await fn()
-  } catch {
-    return fallback()
-  }
+function isMock(err) {
+  return err instanceof NoBackendError
 }
 
-export function getProducts(params = {}) {
+export async function getProducts(params = {}) {
   const { category, q, page = 1, page_size = 24 } = params
   const qs = new URLSearchParams()
   if (category) qs.set('category', category)
@@ -19,28 +15,34 @@ export function getProducts(params = {}) {
   qs.set('page', String(page))
   qs.set('page_size', String(page_size))
 
-  return tryApi(
-    () => api.get(`/api/products?${qs}`),
-    () => mockGetProducts({ category, q })
-  )
+  try {
+    return await api.get(`/api/products?${qs}`)
+  } catch (err) {
+    if (isMock(err)) return mockGetProducts({ category, q })
+    throw err
+  }
 }
 
-export function getProduct(idOrSlug) {
-  return tryApi(
-    () => api.get(`/api/products/${idOrSlug}`),
-    () => {
+export async function getProduct(idOrSlug) {
+  try {
+    return await api.get(`/api/products/${idOrSlug}`)
+  } catch (err) {
+    if (isMock(err)) {
       const product = mockGetProduct(idOrSlug)
       if (!product) throw new NotFoundError(`Product not found: ${idOrSlug}`)
       return product
     }
-  )
+    throw err
+  }
 }
 
-export function getCategories() {
-  return tryApi(
-    () => api.get('/api/categories'),
-    () => mockCategories
-  )
+export async function getCategories() {
+  try {
+    return await api.get('/api/categories')
+  } catch (err) {
+    if (isMock(err)) return mockCategories
+    throw err
+  }
 }
 
 export class NotFoundError extends Error {

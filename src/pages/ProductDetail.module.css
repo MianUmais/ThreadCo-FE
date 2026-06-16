@@ -16,6 +16,13 @@
   top: calc(var(--header-height) + var(--spacing-md));
 }
 
+.primaryImage {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
 .imagePlaceholder {
   aspect-ratio: 3 / 4;
   background-color: var(--color-gray-100);
@@ -36,13 +43,14 @@
 
 .name {
   font-size: 1.5rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   font-weight: var(--font-weight-light);
+  line-height: 1.2;
 }
 
 .price {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: var(--color-gray-600);
 }
 
@@ -52,44 +60,20 @@
   color: var(--color-gray-600);
 }
 
-.sizeSection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.allSoldOut {
+  font-size: 0.875rem;
+  color: var(--color-gray-400);
+  padding: var(--spacing-sm) 0;
 }
 
-.sizeLabel {
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-gray-600);
+.addToCartBtn {
+  width: 100%;
+  margin-top: var(--spacing-xs);
 }
 
-.sizes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.sizeBtn {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--color-gray-200);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  background: transparent;
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.sizeBtn:hover {
-  border-color: var(--color-black);
-}
-
-.sizeBtnActive {
-  background-color: var(--color-black);
-  border-color: var(--color-black);
-  color: var(--color-white);
+.addToCartBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .back {
@@ -97,9 +81,14 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-gray-600);
-  margin-top: var(--spacing-sm);
 }
 
 .back:hover {
   color: var(--color-black);
+}
+
+.notFound,
+.loading {
+  font-size: 0.9375rem;
+  color: var(--color-gray-600);
 }

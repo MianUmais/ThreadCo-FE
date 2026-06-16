@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { mockProducts } from '../api/mock'
+import { mockProductCards } from '../api/mock'
+import { formatPrice } from '../utils/format'
 import styles from './Admin.module.css'
 
 export default function Admin() {
@@ -48,19 +49,19 @@ export default function Admin() {
                 </tr>
               </thead>
               <tbody>
-                {mockProducts.map((product) => (
+                {mockProductCards.map((product) => (
                   <tr key={product.id}>
                     <td>{product.name}</td>
-                    <td>{product.category}</td>
-                    <td>${product.price.toFixed(2)}</td>
+                    <td>{product.category.name}</td>
+                    <td>{formatPrice(product.price_cents)}</td>
                     <td>
                       <span
                         className={[
                           styles.badge,
-                          product.inStock ? styles.badgeGreen : styles.badgeGray,
+                          product.in_stock ? styles.badgeGreen : styles.badgeGray,
                         ].join(' ')}
                       >
-                        {product.inStock ? 'In Stock' : 'Out of Stock'}
+                        {product.in_stock ? 'In Stock' : 'Out of Stock'}
                       </span>
                     </td>
                     <td>

@@ -1,47 +1,42 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { mockProducts } from '../api/mock'
+import { getProducts } from '../api/catalog'
+import ProductCard from '../components/ProductCard'
 import styles from './Storefront.module.css'
 
 export default function Storefront() {
-  const featured = mockProducts.filter((p) => p.inStock).slice(0, 3)
+  const [featured, setFeatured] = useState([])
+
+  useEffect(() => {
+    getProducts({ page_size: 3 }).then(({ items }) =>
+      setFeatured(items.filter((p) => p.in_stock).slice(0, 3))
+    )
+  }, [])
 
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <p className={styles.heroEyebrow}>New Collection</p>
-          <h1 className={styles.heroTitle}>Minimal. Essential. Enduring.</h1>
+          <h1 className={styles.heroTitle}>Minimal.&ensp;Essential.&ensp;Enduring.</h1>
           <Link to="/products" className="btn btn-primary">
             Shop Now
           </Link>
         </div>
       </section>
 
-      <section className={styles.featured}>
-        <div className="container">
-          <h2 className={styles.sectionTitle}>Featured</h2>
-          <div className="grid-products">
-            {featured.map((product) => (
-              <Link
-                key={product.id}
-                to={`/product/${product.id}`}
-                className="product-card"
-                style={{ textDecoration: 'none' }}
-              >
-                <div className="product-card__image">
-                  {product.image ? (
-                    <img src={product.image} alt={product.name} />
-                  ) : (
-                    <div className={styles.imagePlaceholder} />
-                  )}
-                </div>
-                <p className="product-card__name">{product.name}</p>
-                <p className="product-card__price">${product.price.toFixed(2)}</p>
-              </Link>
-            ))}
+      {featured.length > 0 && (
+        <section className={styles.featured}>
+          <div className="container">
+            <h2 className={styles.sectionTitle}>Featured</h2>
+            <div className="grid-products">
+              {featured.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }

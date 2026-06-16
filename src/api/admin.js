@@ -32,3 +32,25 @@ export async function deleteProduct(id) {
 export async function updateVariantStock(variantId, data) {
   return api.patch(`/api/admin/variants/${variantId}/stock`, data)
 }
+
+export async function getAdminOrders(params = {}) {
+  const { status, page = 1, page_size = 50 } = params
+  const qs = new URLSearchParams()
+  qs.set('page', String(page))
+  qs.set('page_size', String(page_size))
+  if (status) qs.set('status', status)
+  try {
+    return await api.get(`/api/admin/orders?${qs}`)
+  } catch (err) {
+    if (isMock(err)) return { items: [], page: 1, page_size: 50, total: 0 }
+    throw err
+  }
+}
+
+export async function getAdminOrder(orderNumber) {
+  return api.get(`/api/admin/orders/${orderNumber}`)
+}
+
+export async function transitionOrder(orderNumber, toStatus) {
+  return api.post(`/api/admin/orders/${orderNumber}/transition`, { to: toStatus })
+}

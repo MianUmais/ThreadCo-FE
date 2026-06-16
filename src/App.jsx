@@ -19,6 +19,8 @@ import OrderConfirmation from './pages/OrderConfirmation'
 import Admin from './pages/Admin'
 import AdminProducts from './pages/AdminProducts'
 import AdminProductForm from './pages/AdminProductForm'
+import AdminOrders from './pages/AdminOrders'
+import AdminOrderDetail from './pages/AdminOrderDetail'
 
 export default function App() {
   return (
@@ -47,6 +49,8 @@ export default function App() {
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="products/new" element={<AdminProductForm />} />
                 <Route path="products/:id/edit" element={<AdminProductForm />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="orders/:orderNumber" element={<AdminOrderDetail />} />
               </Route>
             </Route>
           </Routes>

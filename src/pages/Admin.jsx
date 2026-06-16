@@ -12,6 +12,9 @@ export default function Admin() {
           <Link to="/admin/products" className={styles.navLink}>
             Products
           </Link>
+          <Link to="/admin/orders" className={styles.navLink}>
+            Orders
+          </Link>
         </nav>
         <Link to="/" className={styles.storefront}>
           &larr; Storefront

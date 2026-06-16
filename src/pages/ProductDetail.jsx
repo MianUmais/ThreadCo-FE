@@ -125,6 +125,8 @@ export default function ProductDetail() {
               ? 'Adding…'
               : canAddToCart
               ? 'Add to Cart'
+              : selectedVariant
+              ? 'Unavailable'
               : 'Select a size'}
           </button>
 

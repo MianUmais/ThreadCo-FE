@@ -1,0 +1,144 @@
+.card {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+}
+
+.orderNumber {
+  font-size: 2rem;
+  font-weight: var(--font-weight-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.status {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.statusPaid {
+  color: #166534;
+  font-weight: var(--font-weight-medium);
+}
+
+.mockNotice {
+  background-color: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  padding: var(--spacing-sm);
+  font-size: 0.8125rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.saveNotice {
+  background-color: #f0fdf4;
+  border: 1px solid #86efac;
+  padding: var(--spacing-sm);
+  font-size: 0.8125rem;
+  color: #14532d;
+  line-height: 1.5;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.sectionTitle {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+}
+
+.items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-size: 0.8125rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.itemMeta {
+  font-size: 0.75rem;
+  color: var(--color-gray-400);
+}
+
+.itemTotal {
+  font-size: 0.8125rem;
+}
+
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.totalRowBold {
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-black);
+  border-bottom: none;
+  padding-top: 0.75rem;
+}
+
+.address {
+  font-style: normal;
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  line-height: 1.6;
+}
+
+.fallback {
+  font-size: 0.9375rem;
+  color: var(--color-gray-600);
+  max-width: 480px;
+}
+
+.actions {
+  padding-top: var(--spacing-sm);
+}

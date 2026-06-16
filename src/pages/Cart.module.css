@@ -1,17 +1,23 @@
+.status {
+  font-size: 0.9375rem;
+  color: var(--color-gray-400);
+}
+
 .empty {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: var(--spacing-lg) 0;
+  padding: var(--spacing-md) 0;
 }
 
 .empty p {
   color: var(--color-gray-600);
+  font-size: 0.9375rem;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 300px;
   gap: var(--spacing-xl);
   align-items: start;
 }
@@ -23,57 +29,7 @@
 }
 
 .items {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.item {
-  display: grid;
-  grid-template-columns: 80px 1fr auto;
-  gap: var(--spacing-sm);
-  align-items: center;
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.itemImage {
-  width: 80px;
-  height: 100px;
-  background-color: var(--color-gray-100);
-}
-
-.itemName {
-  font-size: 0.875rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: 0.25rem;
-}
-
-.itemMeta {
-  font-size: 0.75rem;
-  color: var(--color-gray-400);
-  margin-bottom: 0.25rem;
-}
-
-.itemPrice {
-  font-size: 0.875rem;
-  color: var(--color-gray-600);
-}
-
-.removeBtn {
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-gray-400);
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-family: inherit;
-}
-
-.removeBtn:hover {
-  color: var(--color-black);
+  /* items list */
 }
 
 .summary {
@@ -81,10 +37,13 @@
   padding: var(--spacing-md);
   position: sticky;
   top: calc(var(--header-height) + var(--spacing-sm));
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .summaryTitle {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: var(--spacing-md);
@@ -93,8 +52,21 @@
 .summaryRow {
   display: flex;
   justify-content: space-between;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--color-gray-600);
-  padding: 0.5rem 0;
+  padding: 0.625rem 0;
   border-bottom: 1px solid var(--color-gray-100);
+}
+
+.continueShopping {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+  margin-top: var(--spacing-sm);
+  text-align: center;
+}
+
+.continueShopping:hover {
+  color: var(--color-black);
 }

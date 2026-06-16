@@ -139,7 +139,6 @@ export const mockProductCards = mockProductDetails.map((p) => ({
   in_stock: p.variants.some((v) => v.available),
 }))
 
-export const mockCart = { items: [], subtotal_cents: 0 }
 export const mockUser = null
 
 export function mockGetProduct(idOrSlug) {
@@ -153,4 +152,122 @@ export function mockGetProducts({ category } = {}) {
     ? mockProductCards.filter((p) => p.category.slug === category)
     : mockProductCards
   return { items: cards, page: 1, page_size: 24, total: cards.length }
+}
+
+// ---------------------------------------------------------------------------
+// Mock cart (in-memory; resets on page reload — acceptable for mock-only mode)
+// ---------------------------------------------------------------------------
+
+// Index: variantId -> { size, color, stock_qty, available, product_name, unit_price_cents }
+const variantIndex = new Map()
+mockProductDetails.forEach((p) => {
+  p.variants.forEach((v) => {
+    variantIndex.set(v.id, {
+      ...v,
+      product_name: p.name,
+      unit_price_cents: p.price_cents,
+    })
+  })
+})
+
+function mockCartError(status, code, message, extra) {
+  const err = new Error(message)
+  err.status = status
+  err.code = code
+  if (extra) Object.assign(err, extra)
+  return err
+}
+
+const _cart = {
+  token: 'mock-cart-token',
+  items: new Map(), // variantId -> CartItem
+}
+
+function buildCartResponse() {
+  const items = [..._cart.items.values()]
+  const subtotal_cents = items.reduce((sum, i) => sum + i.line_total_cents, 0)
+  return { cart_token: _cart.token, items, subtotal_cents }
+}
+
+export function mockGetCart() {
+  return buildCartResponse()
+}
+
+export function mockAddToCart({ variantId, quantity }) {
+  const info = variantIndex.get(variantId)
+  if (!info) throw mockCartError(404, 'not_found', 'Variant not found')
+  if (!info.available) {
+    throw mockCartError(409, 'out_of_stock', 'Sorry, that size just sold out.')
+  }
+
+  const existing = _cart.items.get(variantId)
+  const newQty = (existing?.quantity ?? 0) + quantity
+  if (newQty > info.stock_qty) {
+    const have = existing?.quantity ?? 0
+    const msg = have > 0
+      ? `Only ${info.stock_qty} units available; you already have ${have} in your cart.`
+      : `Only ${info.stock_qty} units available.`
+    throw mockCartError(409, 'out_of_stock', msg)
+  }
+
+  _cart.items.set(variantId, {
+    variant_id: variantId,
+    product_name: info.product_name,
+    size: info.size,
+    color: info.color,
+    unit_price_cents: info.unit_price_cents,
+    quantity: newQty,
+    line_total_cents: info.unit_price_cents * newQty,
+  })
+  return buildCartResponse()
+}
+
+export function mockUpdateCartItem({ variantId, quantity }) {
+  if (!_cart.items.has(variantId)) {
+    throw mockCartError(404, 'not_found', 'Item not in cart')
+  }
+  if (quantity === 0) {
+    _cart.items.delete(variantId)
+  } else {
+    const item = _cart.items.get(variantId)
+    const info = variantIndex.get(variantId)
+    if (info && quantity > info.stock_qty) {
+      throw mockCartError(409, 'out_of_stock', `Only ${info.stock_qty} units available.`)
+    }
+    _cart.items.set(variantId, {
+      ...item,
+      quantity,
+      line_total_cents: item.unit_price_cents * quantity,
+    })
+  }
+  return buildCartResponse()
+}
+
+export function mockRemoveCartItem({ variantId }) {
+  _cart.items.delete(variantId)
+  return buildCartResponse()
+}
+
+let _orderSeq = 10000
+
+export function mockCheckout({ email, shippingAddress }) {
+  const items = [..._cart.items.values()]
+  if (items.length === 0) {
+    throw mockCartError(400, 'empty_cart', 'Your cart is empty.')
+  }
+  const subtotal_cents = items.reduce((sum, i) => sum + i.line_total_cents, 0)
+  const order_number = `TC-${++_orderSeq}`
+  _cart.items.clear()
+  return {
+    order_number,
+    status: 'Paid',
+    email,
+    items,
+    subtotal_cents,
+    total_cents: subtotal_cents,
+    shipping_address: shippingAddress,
+    payment_method: 'mock',
+    is_mock_payment: true,
+    created_at: new Date().toISOString(),
+  }
 }

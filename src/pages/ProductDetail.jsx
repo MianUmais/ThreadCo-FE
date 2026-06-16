@@ -1,28 +1,46 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getProduct, NotFoundError } from '../api/catalog'
+import { useCart } from '../context/CartContext'
 import { formatPrice } from '../utils/format'
 import VariantSelector from '../components/VariantSelector'
 import styles from './ProductDetail.module.css'
 
 export default function ProductDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const { addItem } = useCart()
+
   const [product, setProduct] = useState(null)
   const [notFound, setNotFound] = useState(false)
   const [selectedVariantId, setSelectedVariantId] = useState(null)
+  const [addingToCart, setAddingToCart] = useState(false)
+  const [cartFeedback, setCartFeedback] = useState(null) // { ok, message }
 
   useEffect(() => {
     setProduct(null)
     setNotFound(false)
     setSelectedVariantId(null)
+    setCartFeedback(null)
     getProduct(id)
       .then(setProduct)
       .catch((err) => {
-        if (err instanceof NotFoundError || err?.status === 404) {
-          setNotFound(true)
-        }
+        if (err instanceof NotFoundError || err?.status === 404) setNotFound(true)
       })
   }, [id])
+
+  async function handleAddToCart() {
+    if (!selectedVariantId) return
+    setAddingToCart(true)
+    setCartFeedback(null)
+    const result = await addItem(selectedVariantId, 1)
+    if (result.ok) {
+      setCartFeedback({ ok: true, message: 'Added to cart' })
+    } else {
+      setCartFeedback({ ok: false, message: result.message })
+    }
+    setAddingToCart(false)
+  }
 
   if (notFound) {
     return (
@@ -46,7 +64,6 @@ export default function ProductDetail() {
   const primaryImage = product.images?.find((img) => img.position === 0) ?? product.images?.[0]
   const selectedVariant = product.variants.find((v) => v.id === selectedVariantId) ?? null
   const canAddToCart = selectedVariant?.available === true
-
   const allSoldOut = product.variants.every((v) => !v.available)
 
   return (
@@ -54,11 +71,7 @@ export default function ProductDetail() {
       <div className={styles.layout}>
         <div className={styles.imageCol}>
           {product.images?.length > 0 && primaryImage?.url ? (
-            <img
-              src={primaryImage.url}
-              alt={product.name}
-              className={styles.primaryImage}
-            />
+            <img src={primaryImage.url} alt={product.name} className={styles.primaryImage} />
           ) : (
             <div className={styles.imagePlaceholder} aria-hidden="true" />
           )}
@@ -79,17 +92,37 @@ export default function ProductDetail() {
             <VariantSelector
               variants={product.variants}
               selectedVariantId={selectedVariantId}
-              onSelect={setSelectedVariantId}
+              onSelect={(id) => { setSelectedVariantId(id); setCartFeedback(null) }}
             />
+          )}
+
+          {cartFeedback && (
+            <p className={cartFeedback.ok ? styles.feedbackOk : styles.feedbackError}>
+              {cartFeedback.message}
+              {cartFeedback.ok && (
+                <>
+                  {' — '}
+                  <button
+                    className={styles.viewCartLink}
+                    onClick={() => navigate('/cart')}
+                  >
+                    View Cart
+                  </button>
+                </>
+              )}
+            </p>
           )}
 
           <button
             className={['btn btn-primary', styles.addToCartBtn].join(' ')}
-            disabled={!canAddToCart}
-            aria-disabled={!canAddToCart}
+            onClick={handleAddToCart}
+            disabled={!canAddToCart || addingToCart}
+            aria-disabled={!canAddToCart || addingToCart}
           >
             {allSoldOut
               ? 'Sold Out'
+              : addingToCart
+              ? 'Adding…'
               : canAddToCart
               ? 'Add to Cart'
               : 'Select a size'}

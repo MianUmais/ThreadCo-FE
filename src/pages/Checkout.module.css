@@ -1,0 +1,144 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--spacing-xl);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.sectionTitle {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+  margin-bottom: 0.25rem;
+}
+
+.row {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+@media (max-width: 500px) {
+  .row {
+    flex-direction: column;
+  }
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  color: #b91c1c;
+  margin-top: 0.2rem;
+}
+
+.mockPayment {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+  background-color: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  padding: var(--spacing-sm);
+}
+
+.mockBadge {
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  padding: 0.2rem 0.5rem;
+  align-self: center;
+}
+
+.mockText {
+  font-size: 0.8125rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.errorBanner {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  padding: var(--spacing-sm);
+  font-size: 0.8125rem;
+  color: #991b1b;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.emptyMsg {
+  font-size: 0.9375rem;
+  color: var(--color-gray-600);
+}
+
+/* Summary sidebar */
+.summary {
+  border: 1px solid var(--color-gray-200);
+  padding: var(--spacing-md);
+  position: sticky;
+  top: calc(var(--header-height) + var(--spacing-sm));
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.summaryTitle {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+  margin-bottom: 0.25rem;
+}
+
+.summaryItems {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+  font-size: 0.8125rem;
+}
+
+.summaryItemName {
+  color: var(--color-black);
+  flex: 1;
+}
+
+.summaryItemMeta {
+  color: var(--color-gray-400);
+  font-size: 0.75rem;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-gray-200);
+}

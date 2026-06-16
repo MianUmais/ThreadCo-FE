@@ -76,6 +76,28 @@
   cursor: not-allowed;
 }
 
+.feedbackOk {
+  font-size: 0.8125rem;
+  color: #166534;
+}
+
+.feedbackError {
+  font-size: 0.8125rem;
+  color: #b91c1c;
+}
+
+.viewCartLink {
+  font-size: inherit;
+  font-family: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: inherit;
+}
+
 .back {
   font-size: 0.75rem;
   letter-spacing: 0.08em;

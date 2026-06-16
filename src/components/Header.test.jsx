@@ -1,7 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Header from './Header'
+
+// Mock CartContext so Header tests don't need a full CartProvider + API stack
+vi.mock('../context/CartContext', () => ({
+  useCart: () => ({ cartCount: 0 }),
+}))
 
 describe('Header', () => {
   function renderHeader() {

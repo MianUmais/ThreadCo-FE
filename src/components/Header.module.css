@@ -62,9 +62,25 @@
   text-transform: uppercase;
   color: var(--color-gray-600);
   transition: color var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
 }
 
 .actionLink:hover {
   color: var(--color-black);
   text-decoration: none;
+}
+
+.cartBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  font-size: 0.625rem;
+  border-radius: 50%;
+  line-height: 1;
 }

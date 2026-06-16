@@ -1,4 +1,5 @@
 import { NavLink, Link } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -7,6 +8,8 @@ const NAV_LINKS = [
 ]
 
 export default function Header() {
+  const { cartCount } = useCart()
+
   return (
     <header className={styles.header} data-testid="site-header">
       <div className={styles.inner}>
@@ -29,8 +32,12 @@ export default function Header() {
         </nav>
 
         <div className={styles.actions}>
-          <Link to="/cart" className={styles.actionLink} aria-label="Cart">
-            Cart
+          <Link
+            to="/cart"
+            className={styles.actionLink}
+            aria-label={cartCount > 0 ? `Cart (${cartCount} items)` : 'Cart'}
+          >
+            Cart{cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
           </Link>
         </div>
       </div>

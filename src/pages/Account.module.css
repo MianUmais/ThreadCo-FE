@@ -1,0 +1,41 @@
+.unauthenticated {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.title {
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-md);
+}
+
+.message {
+  color: var(--color-gray-600);
+  font-size: 0.9375rem;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.section {
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-gray-600);
+}
+
+.empty {
+  font-size: 0.875rem;
+  color: var(--color-gray-400);
+}
